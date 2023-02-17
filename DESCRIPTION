@@ -13,6 +13,7 @@ Depends:
 Imports:
     SqlRender (>= 1.6.3),
     EmpiricalCalibration (>= 2.0.0),
+    PheValuator (2.1.10),
     Cyclops (>= 3.2.0),
     FeatureExtraction (>= 3.2.0),
     CohortMethod (>= 3.0.1),
