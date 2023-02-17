@@ -8,7 +8,7 @@ Description: Empirical evaluation of QBA for outcome phenotype error correction 
     estimation scenarios. It also simulates an analytic space defined by outcome incidence proportions, observed effect estimates,
     and phenotype measurement errors to determine which QBA input combinations produce valid results.
 Depends:
-    R(>= 4.2.1),
+    R (>= 4.2.1),
     DatabaseConnector (>= 4.2.2)
 Imports:
     SqlRender (>= 1.6.3),
