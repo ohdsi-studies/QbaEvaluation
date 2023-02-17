@@ -1,0 +1,4 @@
+exposureCohortId,exposureName,exposureConceptSetId,indicationName,indicationConceptSetId,indicationDrugsConceptSetId,exposureCohortName,exposureConceptIds
+1,ACEI,1135,hypertension,1139,1140,ACEI w hypertension,1335471;1340128;1341927;1363749;1308216;1310756;1373225;1331235;1334456;1342439
+2,ARB,1138,hypertension,1139,1140,ARB w hypertension,40235485;1351557;1346686;1347384;1367500;40226742;1317640;1308842
+3,THZ,1136,hypertension,1139,1140,THZ w hypertension,1395058;974166;978555;907013

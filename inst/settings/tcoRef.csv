@@ -1,0 +1,3 @@
+targetCohortId,comparatorCohortId,outcomeName,outcomeCohortIds,outcomeConceptSetId,type
+1,3,Ischemic stroke,4008;4009,1142,Positive control
+1,2,Ischemic stroke,4008;4009,1142,Negative control

@@ -67,6 +67,3 @@ tcoRef$comparatorIndEvalCohortId <- as.numeric(paste0(tcoRef$comparatorCohortId,
 tcoRef$comparatorIndEvalCohortName <- sprintf("Eval - %s - %s", tcoRef$outcomeName, tcoRef$comparatorCohortName)
 
 readr::write_csv(tcoRef, "inst/settings/tcoRefFull.csv")
-
-# Apixaban vs warfarin among Afib patients for GI bleeding
-# LEGEND exposure comparisons for heart failure

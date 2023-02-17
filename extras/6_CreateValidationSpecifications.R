@@ -115,65 +115,65 @@ for (outcomeName in outcomeNames) { # outcomeName <- outcomeNames[1]
 
 
     # target validation settings ===============================================
-    targetEvalCohortArgs <- PheValuator::createCreateEvaluationCohortArgs(
-      xSpecCohortId = xSpecCohortId,
-      xSensCohortId = xSensCohortId,
-      prevalenceCohortId = prevCohortId,
-      evaluationPopulationCohortId = targetEvalCohortId,
-      covariateSettings = PheValuator::createDefaultAcuteCovariateSettings(
-        excludedCovariateConceptIds = targetConceptIds,
-        addDescendantsToExclude = TRUE,
-        startDayWindow1 = 0,
-        endDayWindow1 = 10,
-        startDayWindow2 = 11,
-        endDayWindow2 = 20,
-        startDayWindow3 = 21,
-        endDayWindow3 = 30),
-      lowerAgeLimit = 0,
-      upperAgeLimit = 120,
-      startDate = "20100101",
-      endDate = "21000101")
-
-    targetEvalAnalysisList <- list()
-    for (outcomeCohortId in outcomeCohortIds) {  # outcomeCohortId = 4008
-      targetEvalAnalysisList[[length(targetEvalAnalysisList) + 1]] <- PheValuator::createPheValuatorAnalysis(
-        analysisId = length(targetEvalAnalysisList) + 1,
-        description = outcomeRef$cohortName[outcomeRef$cohortId == outcomeCohortId],
-        createEvaluationCohortArgs = targetEvalCohortArgs,
-        testPhenotypeAlgorithmArgs = PheValuator::createTestPhenotypeAlgorithmArgs(phenotypeCohortId = outcomeCohortId))
-    }
-    PheValuator::savePheValuatorAnalysisList(targetEvalAnalysisList, sprintf("inst/validation/%s.json", targetEvalCohortName))
-
-
-    # comparator validation settings ===========================================
-    comparatorEvalCohortArgs <- PheValuator::createCreateEvaluationCohortArgs(
-      xSpecCohortId = xSpecCohortId,
-      xSensCohortId = xSensCohortId,
-      prevalenceCohortId = prevCohortId,
-      evaluationPopulationCohortId = comparatorEvalCohortId,
-      covariateSettings = PheValuator::createDefaultAcuteCovariateSettings(
-        excludedCovariateConceptIds = comparatorConceptIds,
-        addDescendantsToExclude = TRUE,
-        startDayWindow1 = 0,
-        endDayWindow1 = 10,
-        startDayWindow2 = 11,
-        endDayWindow2 = 20,
-        startDayWindow3 = 21,
-        endDayWindow3 = 30),
-      lowerAgeLimit = 0,
-      upperAgeLimit = 120,
-      startDate = "20100101",
-      endDate = "21000101")
-
-    comparatorEvalAnalysisList <- list()
-    for (outcomeCohortId in outcomeCohortIds) {  # outcomeCohortId = 4008
-      comparatorEvalAnalysisList[[length(comparatorEvalAnalysisList) + 1]] <- PheValuator::createPheValuatorAnalysis(
-        analysisId = length(comparatorEvalAnalysisList) + 1,
-        description = outcomeRef$cohortName[outcomeRef$cohortId == outcomeCohortId],
-        createEvaluationCohortArgs = targetEvalCohortArgs,
-        testPhenotypeAlgorithmArgs = PheValuator::createTestPhenotypeAlgorithmArgs(phenotypeCohortId = outcomeCohortId))
-    }
-    PheValuator::savePheValuatorAnalysisList(comparatorEvalAnalysisList, sprintf("inst/validation/%s.json", comparatorEvalCohortName))
+    # targetEvalCohortArgs <- PheValuator::createCreateEvaluationCohortArgs(
+    #   xSpecCohortId = xSpecCohortId,
+    #   xSensCohortId = xSensCohortId,
+    #   prevalenceCohortId = prevCohortId,
+    #   evaluationPopulationCohortId = targetEvalCohortId,
+    #   covariateSettings = PheValuator::createDefaultAcuteCovariateSettings(
+    #     excludedCovariateConceptIds = targetConceptIds,
+    #     addDescendantsToExclude = TRUE,
+    #     startDayWindow1 = 0,
+    #     endDayWindow1 = 10,
+    #     startDayWindow2 = 11,
+    #     endDayWindow2 = 20,
+    #     startDayWindow3 = 21,
+    #     endDayWindow3 = 30),
+    #   lowerAgeLimit = 0,
+    #   upperAgeLimit = 120,
+    #   startDate = "20100101",
+    #   endDate = "21000101")
+    #
+    # targetEvalAnalysisList <- list()
+    # for (outcomeCohortId in outcomeCohortIds) {  # outcomeCohortId = 4008
+    #   targetEvalAnalysisList[[length(targetEvalAnalysisList) + 1]] <- PheValuator::createPheValuatorAnalysis(
+    #     analysisId = length(targetEvalAnalysisList) + 1,
+    #     description = outcomeRef$cohortName[outcomeRef$cohortId == outcomeCohortId],
+    #     createEvaluationCohortArgs = targetEvalCohortArgs,
+    #     testPhenotypeAlgorithmArgs = PheValuator::createTestPhenotypeAlgorithmArgs(phenotypeCohortId = outcomeCohortId))
+    # }
+    # PheValuator::savePheValuatorAnalysisList(targetEvalAnalysisList, sprintf("inst/validation/%s.json", targetEvalCohortName))
+    #
+    #
+    # # comparator validation settings ===========================================
+    # comparatorEvalCohortArgs <- PheValuator::createCreateEvaluationCohortArgs(
+    #   xSpecCohortId = xSpecCohortId,
+    #   xSensCohortId = xSensCohortId,
+    #   prevalenceCohortId = prevCohortId,
+    #   evaluationPopulationCohortId = comparatorEvalCohortId,
+    #   covariateSettings = PheValuator::createDefaultAcuteCovariateSettings(
+    #     excludedCovariateConceptIds = comparatorConceptIds,
+    #     addDescendantsToExclude = TRUE,
+    #     startDayWindow1 = 0,
+    #     endDayWindow1 = 10,
+    #     startDayWindow2 = 11,
+    #     endDayWindow2 = 20,
+    #     startDayWindow3 = 21,
+    #     endDayWindow3 = 30),
+    #   lowerAgeLimit = 0,
+    #   upperAgeLimit = 120,
+    #   startDate = "20100101",
+    #   endDate = "21000101")
+    #
+    # comparatorEvalAnalysisList <- list()
+    # for (outcomeCohortId in outcomeCohortIds) {  # outcomeCohortId = 4008
+    #   comparatorEvalAnalysisList[[length(comparatorEvalAnalysisList) + 1]] <- PheValuator::createPheValuatorAnalysis(
+    #     analysisId = length(comparatorEvalAnalysisList) + 1,
+    #     description = outcomeRef$cohortName[outcomeRef$cohortId == outcomeCohortId],
+    #     createEvaluationCohortArgs = targetEvalCohortArgs,
+    #     testPhenotypeAlgorithmArgs = PheValuator::createTestPhenotypeAlgorithmArgs(phenotypeCohortId = outcomeCohortId))
+    # }
+    # PheValuator::savePheValuatorAnalysisList(comparatorEvalAnalysisList, sprintf("inst/validation/%s.json", comparatorEvalCohortName))
 
 
     # target/indication validation settings ====================================
