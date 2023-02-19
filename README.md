@@ -10,7 +10,7 @@ Empirical and simulated evaluation of quantitative bias analysis for outcome phe
 - Study lead forums tag: **[jweave17](https://forums.ohdsi.org/u/jweave17)**
 - Study start date: **1 January 2022**
 - Study end date: **-**
-- Protocol: **[Protocol](https://data.ohdsi.org)**
+- Protocol: **[Protocol](https://ohdsi-studies.github.io/QbaEvaluation/protocol.html)**
 - Publications: **TODO**
 - Results explorer: **[Explorer](https://data.ohdsi.org/QbaEvaluation)**
 
