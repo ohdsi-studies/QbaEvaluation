@@ -11,6 +11,7 @@ maxCores <- parallel::detectCores()
 
 
 # Optum DoD settings ===========================================================
+
 databaseId <- "optum_extended_dod"
 outputFolder <- file.path(studyFolder, databaseId)
 cdmDatabaseSchema <- "cdm_optum_extended_dod_v1825"
@@ -25,23 +26,24 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
         user = Sys.getenv("OHDA_USER"),
         password = Sys.getenv("OHDA_PASSWORD"))
 
-execute(connectionDetails = connectionDetails,
-        outputFolder = outputFolder,
-        databaseId = databaseId,
-        cdmDatabaseSchema = cdmDatabaseSchema,
-        cohortDatabaseSchema = cohortDatabaseSchema,
-        cohortTable = cohortTable,
-        createCohortTable = FALSE, # TRUE will delete existing cohorts
-        createExposureCohorts = FALSE,
-        createOutcomeCohorts = FALSE,
-        createValidationCohorts = FALSE,
-        runOutcomeValidation = FALSE,
-        runCohortMethod = FALSE,
-        runMisclassificationCorrection = FALSE,
-        exportResults = TRUE)
+QbaEvaluation::execute(connectionDetails = connectionDetails,
+                       outputFolder = outputFolder,
+                       databaseId = databaseId,
+                       cdmDatabaseSchema = cdmDatabaseSchema,
+                       cohortDatabaseSchema = cohortDatabaseSchema,
+                       cohortTable = cohortTable,
+                       createCohortTable = FALSE, # TRUE will delete existing cohorts
+                       createExposureCohorts = FALSE,
+                       createOutcomeCohorts = FALSE,
+                       createValidationCohorts = FALSE,
+                       runOutcomeValidation = FALSE,
+                       runCohortMethod = FALSE,
+                       runMisclassificationCorrection = FALSE,
+                       exportResults = TRUE)
 
 
 # Optum EHR settings ===========================================================
+
 databaseId <- "optum_ehr"
 outputFolder <- file.path(studyFolder, databaseId)
 cdmDatabaseSchema <- "cdm_optum_ehr_v1821"
@@ -56,22 +58,24 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
         user = Sys.getenv("OHDA_USER"),
         password = Sys.getenv("OHDA_PASSWORD"))
 
-execute(connectionDetails = connectionDetails,
-        outputFolder = outputFolder,
-        databaseId = databaseId,
-        cdmDatabaseSchema = cdmDatabaseSchema,
-        cohortDatabaseSchema = cohortDatabaseSchema,
-        cohortTable = cohortTable,
-        createCohortTable = FALSE, # TRUE will delete existing cohorts
-        createExposureCohorts = FALSE,
-        createOutcomeCohorts = FALSE,
-        createValidationCohorts = FALSE,
-        runOutcomeValidation = FALSE,
-        runCohortMethod = FALSE,
-        runMisclassificationCorrection = FALSE,
-        exportResults = TRUE)
+QbaEvaluation::execute(connectionDetails = connectionDetails,
+                       outputFolder = outputFolder,
+                       databaseId = databaseId,
+                       cdmDatabaseSchema = cdmDatabaseSchema,
+                       cohortDatabaseSchema = cohortDatabaseSchema,
+                       cohortTable = cohortTable,
+                       createCohortTable = FALSE, # TRUE will delete existing cohorts
+                       createExposureCohorts = FALSE,
+                       createOutcomeCohorts = FALSE,
+                       createValidationCohorts = FALSE,
+                       runOutcomeValidation = FALSE,
+                       runCohortMethod = FALSE,
+                       runMisclassificationCorrection = FALSE,
+                       exportResults = TRUE)
+
 
 # MDCR settings ================================================================
+
 databaseId <- "truven_mdcr"
 outputFolder <- file.path(studyFolder, databaseId)
 cdmDatabaseSchema <- "cdm_truven_mdcr_v1838"
@@ -86,22 +90,24 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
         user = Sys.getenv("OHDA_USER"),
         password = Sys.getenv("OHDA_PASSWORD"))
 
-execute(connectionDetails = connectionDetails,
-        outputFolder = outputFolder,
-        databaseId = databaseId,
-        cdmDatabaseSchema = cdmDatabaseSchema,
-        cohortDatabaseSchema = cohortDatabaseSchema,
-        cohortTable = cohortTable,
-        createCohortTable = FALSE, # TRUE will delete existing cohorts
-        createExposureCohorts = FALSE,
-        createOutcomeCohorts = FALSE,
-        createValidationCohorts = FALSE,
-        runOutcomeValidation = FALSE,
-        runCohortMethod = FALSE,
-        runMisclassificationCorrection = FALSE,
-        exportResults = TRUE)
+QbaEvaluation::execute(connectionDetails = connectionDetails,
+                       outputFolder = outputFolder,
+                       databaseId = databaseId,
+                       cdmDatabaseSchema = cdmDatabaseSchema,
+                       cohortDatabaseSchema = cohortDatabaseSchema,
+                       cohortTable = cohortTable,
+                       createCohortTable = FALSE, # TRUE will delete existing cohorts
+                       createExposureCohorts = FALSE,
+                       createOutcomeCohorts = FALSE,
+                       createValidationCohorts = FALSE,
+                       runOutcomeValidation = FALSE,
+                       runCohortMethod = FALSE,
+                       runMisclassificationCorrection = FALSE,
+                       exportResults = TRUE)
+
 
 # CCAE settings ================================================================
+
 databaseId <- "truven_ccae"
 outputFolder <- file.path(studyFolder, databaseId)
 cdmDatabaseSchema <- "cdm_truven_ccae_v1831"
@@ -116,22 +122,24 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
         user = Sys.getenv("OHDA_USER"),
         password = Sys.getenv("OHDA_PASSWORD"))
 
-execute(connectionDetails = connectionDetails,
-        outputFolder = outputFolder,
-        databaseId = databaseId,
-        cdmDatabaseSchema = cdmDatabaseSchema,
-        cohortDatabaseSchema = cohortDatabaseSchema,
-        cohortTable = cohortTable,
-        createCohortTable = FALSE,
-        createExposureCohorts = FALSE,
-        createOutcomeCohorts = FALSE,
-        createValidationCohorts = FALSE,
-        runOutcomeValidation = FALSE,
-        runCohortMethod = FALSE,
-        runMisclassificationCorrection = FALSE,
-        exportResults = TRUE)
+QbaEvaluation::execute(connectionDetails = connectionDetails,
+                       outputFolder = outputFolder,
+                       databaseId = databaseId,
+                       cdmDatabaseSchema = cdmDatabaseSchema,
+                       cohortDatabaseSchema = cohortDatabaseSchema,
+                       cohortTable = cohortTable,
+                       createCohortTable = FALSE,
+                       createExposureCohorts = FALSE,
+                       createOutcomeCohorts = FALSE,
+                       createValidationCohorts = FALSE,
+                       runOutcomeValidation = FALSE,
+                       runCohortMethod = FALSE,
+                       runMisclassificationCorrection = FALSE,
+                       exportResults = TRUE)
+
 
 # MDCD settings ================================================================
+
 databaseId <- "truven_mdcd"
 outputFolder <- file.path(studyFolder, databaseId)
 cdmDatabaseSchema <- "cdm_truven_mdcd_v1734  "
@@ -146,23 +154,24 @@ connectionDetails <- DatabaseConnector::createConnectionDetails(
         user = Sys.getenv("OHDA_USER"),
         password = Sys.getenv("OHDA_PASSWORD"))
 
-execute(connectionDetails = connectionDetails,
-        outputFolder = outputFolder,
-        databaseId = databaseId,
-        cdmDatabaseSchema = cdmDatabaseSchema,
-        cohortDatabaseSchema = cohortDatabaseSchema,
-        cohortTable = cohortTable,
-        createCohortTable = FALSE,
-        createExposureCohorts = FALSE,
-        createOutcomeCohorts = FALSE,
-        createValidationCohorts = FALSE,
-        runOutcomeValidation = FALSE,
-        runCohortMethod = FALSE,
-        runMisclassificationCorrection = FALSE,
-        exportResults = TRUE)
+QbaEvaluation::execute(connectionDetails = connectionDetails,
+                       outputFolder = outputFolder,
+                       databaseId = databaseId,
+                       cdmDatabaseSchema = cdmDatabaseSchema,
+                       cohortDatabaseSchema = cohortDatabaseSchema,
+                       cohortTable = cohortTable,
+                       createCohortTable = FALSE,
+                       createExposureCohorts = FALSE,
+                       createOutcomeCohorts = FALSE,
+                       createValidationCohorts = FALSE,
+                       runOutcomeValidation = FALSE,
+                       runCohortMethod = FALSE,
+                       runMisclassificationCorrection = FALSE,
+                       exportResults = TRUE)
 
 
 # Prepare estimation for results viewer ========================================
+
 shinyDataFolder <- file.path(studyFolder, "shinyData")
 if (!file.exists(shinyDataFolder)) {
   dir.create(shinyDataFolder)
@@ -175,12 +184,23 @@ file.copy(from = c(list.files(file.path(studyFolder, "optum_ehr", "export"), ful
           to = shinyDataFolder,
           overwrite = TRUE)
 
-mergeShinyData(shinyDataFolder = shinyDataFolder,
-               mergedShinyDataFolder = file.path(studyFolder, "mergedShinyDataFolder"))
+QbaEvaluation::mergeShinyData(shinyDataFolder = shinyDataFolder,
+                              mergedShinyDataFolder = file.path(studyFolder, "mergedShinyDataFolder"))
 
 
 # Grid-space simulation analysis ===============================================
 
+gridSpaceFolder <- file.path(studyFolder, "gridSpace")
+if (!file.exists(gridSpaceFolder)) {
+  dir.create(gridSpaceFolder)
+}
+
+QbaEvaluation::runGridSpaceAnalysis(createGridSpace = TRUE,
+                                    oddsRatios = c(1.01, 1.25, 1.50, 2, 4, 10), # 1.0001
+                                    sens = seq(0.05, 1, 0.05),
+                                    incidences = 10^(-1:-5),
+                                    runQba = TRUE,
+                                    outputFolder = gridSpaceFolder)
 
 
 

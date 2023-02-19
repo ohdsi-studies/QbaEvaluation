@@ -3,7 +3,7 @@ runMisclassificationCorrection <- function(outputFolder,
                                            databaseId) {
 
   # create bias parameter object ===============================================
-  path <- system.file("settings", "outcomeRef.csv", package = "OutcomeMisclassificationEval")
+  path <- system.file("settings", "outcomeRef.csv", package = "QbaEvaluation")
   outcomeRef <- readr::read_csv(path, show_col_types = FALSE)
   outcomeRef <- outcomeRef[, c("cohortId", "cohortName")]
   names(outcomeRef) <- c("outcomeCohortId", "outcomeCohortName")
@@ -125,10 +125,7 @@ runMisclassificationCorrection <- function(outputFolder,
     dplyr::mutate(dplyr::across(where(is.numeric), round, digits = 7))
 
 
-  ## non-differential PIE analysis =============================================
-
-
-  ## combine ===================================================================
+  # combine ===================================================================
   cmAnalysisSummary <- dplyr::bind_rows(uncorrectedCmAnalysisSummary,
                                         nonDiffCmAnalysisSummary,
                                         diffCmAnalysisSummary) %>%
