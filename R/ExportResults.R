@@ -9,11 +9,11 @@ exportResults <- function(outputFolder,
   }
 
   exportAnalyses(outputFolder, exportFolder)
-  # exportExposures(outputFolder, exportFolder)
-  # exportOutcomes(outcomeFolder, exportFolder)
+  exportExposures(outputFolder, exportFolder)
+  exportOutcomes(outcomeFolder, exportFolder)
   exportMetadata(outputFolder, exportFolder, databaseId, databaseId)
   exportMainResults(outputFolder, exportFolder, databaseId)
-  # exportDiagnostics(outputFolder, exportFolder, databaseId)
+  exportDiagnostics(outputFolder, exportFolder, databaseId)
 }
 
 
@@ -22,7 +22,7 @@ exportAnalyses <- function(outputFolder, exportFolder) {
 
   ParallelLogger::logInfo(" ---- cohort_method_analysis table ------------------")
   tempFileName <- tempfile()
-  cmAnalysisListFile <- system.file("settings", "cmAnalysisList.json", package = "OutcomeMisclassificationEval")
+  cmAnalysisListFile <- system.file("settings", "cmAnalysisList.json", package = "QbaEvaluation")
   cmAnalysisList <- CohortMethod::loadCmAnalysisList(cmAnalysisListFile)
 
   cmAnalysisToRow <- function(cmAnalysis) {  # cmAnalysis <- cmAnalysisList[[1]]
@@ -62,9 +62,9 @@ exportExposures <- function(outputFolder, exportFolder) {
   ParallelLogger::logInfo(" ==== Exporting exposures ===========================")
 
   ParallelLogger::logInfo(" ---- exposure_of_interest table --------------------")
-  tcoRefFile <- system.file("settings", "tcoRefFull.csv", package = "OutcomeMisclassificationEval")
+  tcoRefFile <- system.file("settings", "tcoRefFull.csv", package = "QbaEvaluation")
   tcosRef <- read.csv(tcoRefFile, stringsAsFactors = FALSE)
-  exposureRefFile <- system.file("settings", "exposureRefFull.csv", package = "OutcomeMisclassificationEval")
+  exposureRefFile <- system.file("settings", "exposureRefFull.csv", package = "QbaEvaluation")
   exposureRef <- read.csv(exposureRefFile)
 
   createExposureRow <- function(exposureCohortId) { # exposureCohortId=1
@@ -85,7 +85,7 @@ exportOutcomes <- function(outputFolder, exportFolder) {
   ParallelLogger::logInfo(" ==== Exporting outcomes ============================")
 
   ParallelLogger::logInfo(" ---- outcome_of_interest table ---------------------")
-  outcomeRefFile <- system.file("settings", "outcomeRef.csv", package = "OutcomeMisclassificationEval")
+  outcomeRefFile <- system.file("settings", "outcomeRef.csv", package = "QbaEvaluation")
   outcomeRef <- read.csv(outcomeRefFile)
 
   createOutcomeRow <- function(outcomeCohortId) { # outcomeCohortId = 4008
@@ -119,7 +119,7 @@ exportMetadata <- function(outputFolder,
   if (file.exists(fileName)) {
     unlink(fileName)
   }
-  outcomeRefFile <- system.file("settings", "outcomeRef.csv", package = "OutcomeMisclassificationEval")
+  outcomeRefFile <- system.file("settings", "outcomeRef.csv", package = "QbaEvaluation")
   outcomeRef <- read.csv(outcomeRefFile)
   outcomesOfInterest <- outcomeRef$cohortId
   reference <- readRDS(file.path(outputFolder, "cmOutput", "outcomeModelReference.rds"))

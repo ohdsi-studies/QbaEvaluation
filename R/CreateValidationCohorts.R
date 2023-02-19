@@ -26,7 +26,7 @@ createValidationCohorts <- function(connectionDetails,
   connection <- DatabaseConnector::connect(connectionDetails)
   on.exit(DatabaseConnector::disconnect(connection))
 
-  path <- system.file("settings", "validationCohortRef.csv", package = "OutcomeMisclassificationEval")
+  path <- system.file("settings", "validationCohortRef.csv", package = "QbaEvaluation")
   validationCohortRef <- readr::read_csv(path, show_col_types = FALSE)
 
   # build validation evaluation cohorts ========================================
@@ -38,7 +38,7 @@ createValidationCohorts <- function(connectionDetails,
 
     ParallelLogger::logInfo(sprintf("  ---- Building %s", validationCohortName))
     sql <- SqlRender::loadRenderTranslateSql(sqlFilename =  sqlFileName,
-                                             packageName = "OutcomeMisclassificationEval",
+                                             packageName = "QbaEvaluation",
                                              dbms = attr(connection, "dbms"),
                                              vocabulary_database_schema = vocabularyDatabaseSchema,
                                              cdm_database_schema = cdmDatabaseSchema,
@@ -53,7 +53,7 @@ createValidationCohorts <- function(connectionDetails,
 
   validationCohortIds <- validationCohortRef$cohortId
   sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "GetCohortCounts.sql",
-                                           packageName = "OutcomeMisclassificationEval",
+                                           packageName = "QbaEvaluation",
                                            dbms = attr(connection, "dbms"),
                                            cohort_database_schema = cohortDatabaseSchema,
                                            cohort_table = cohortTable,

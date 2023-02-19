@@ -5,7 +5,7 @@ library(magrittr)
 
 options(andromedaTempFolder = "G:/andromedaTemp", spipen = 999)
 maxCores <- parallel::detectCores()
-studyFolder <- "G:/QbaEvaluation" #"G:/OutcomeMisclassificationEval"
+studyFolder <- "G:/OutcomeMisclassificationEval" # move to "G:/QbaEvaluation"
 baseUrl <- Sys.getenv("BASE_URL")
 maxCores <- parallel::detectCores()
 
@@ -162,7 +162,7 @@ execute(connectionDetails = connectionDetails,
         exportResults = TRUE)
 
 
-# Prepare for results viewer ===================================================
+# Prepare estimation for results viewer ========================================
 shinyDataFolder <- file.path(studyFolder, "shinyData")
 if (!file.exists(shinyDataFolder)) {
   dir.create(shinyDataFolder)
@@ -177,3 +177,11 @@ file.copy(from = c(list.files(file.path(studyFolder, "optum_ehr", "export"), ful
 
 mergeShinyData(shinyDataFolder = shinyDataFolder,
                mergedShinyDataFolder = file.path(studyFolder, "mergedShinyDataFolder"))
+
+
+# Grid-space simulation analysis ===============================================
+
+
+
+
+

@@ -5,7 +5,7 @@ runOutcomeValidation <- function(connectionDetails,
                                  cohortTable,
                                  outputFolder) {
 
-  path <- system.file("settings", "tcoRefFull.csv", package = "OutcomeMisclassificationEval")
+  path <- system.file("settings", "tcoRefFull.csv", package = "QbaEvaluation")
   tcoRef <- readr::read_csv(path, show_col_types = FALSE)
 
   for (i in 1:nrow(tcoRef)) { # i=1

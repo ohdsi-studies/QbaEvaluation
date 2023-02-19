@@ -26,7 +26,7 @@ createExposureCohorts <- function(connectionDetails,
   connection <- DatabaseConnector::connect(connectionDetails)
   on.exit(DatabaseConnector::disconnect(connection))
 
-  path <- system.file("settings", "exposureRefFull.csv", package = "OutcomeMisclassificationEval")
+  path <- system.file("settings", "exposureRefFull.csv", package = "QbaEvaluation")
   exposureRef <- readr::read_csv(path, show_col_types = FALSE)
 
   # build exposure cohorts -----------------------------------------------------
@@ -40,7 +40,7 @@ createExposureCohorts <- function(connectionDetails,
 
     ParallelLogger::logInfo(sprintf("  ---- Building %s", cohortName))
     sql <- SqlRender::loadRenderTranslateSql(sqlFilename =  sqlFileName,
-                                             packageName = "OutcomeMisclassificationEval",
+                                             packageName = "QbaEvaluation",
                                              dbms = attr(connection, "dbms"),
                                              vocabulary_database_schema = vocabularyDatabaseSchema,
                                              cdm_database_schema = cdmDatabaseSchema,
@@ -55,7 +55,7 @@ createExposureCohorts <- function(connectionDetails,
 
   exposureCohortIds <- exposureRef$exposureCohortId
   sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "GetCohortCounts.sql",
-                                           packageName = "OutcomeMisclassificationEval",
+                                           packageName = "QbaEvaluation",
                                            dbms = attr(connection, "dbms"),
                                            cohort_database_schema = cohortDatabaseSchema,
                                            cohort_table = cohortTable,

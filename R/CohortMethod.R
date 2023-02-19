@@ -12,7 +12,7 @@ runCohortMethod <- function(connectionDetails,
     dir.create(cmOutputFolder)
   }
 
-  cmAnalysisListFile <- system.file("settings", "cmAnalysisList.json", package = "OutcomeMisclassificationEval")
+  cmAnalysisListFile <- system.file("settings", "cmAnalysisList.json", package = "QbaEvaluation")
   cmAnalysisList <- CohortMethod::loadCmAnalysisList(cmAnalysisListFile)
   tcosList <- createTcos()
   outcomeIdsOfInterest <- tcosList[[1]]$outcomeIds # FIX THIS
@@ -63,7 +63,7 @@ runCohortMethod <- function(connectionDetails,
 }
 
 createTcos <- function() {
-  path <- system.file("settings", "tcoRefFull.csv", package = "OutcomeMisclassificationEval")
+  path <- system.file("settings", "tcoRefFull.csv", package = "QbaEvaluation")
   tcoRef <- read.csv(path, stringsAsFactors = FALSE)
   tcs <- unique(tcoRef[, c("targetCohortId", "comparatorCohortId")])
   createTco <- function(i) { # i = 2
@@ -87,8 +87,8 @@ createTcos <- function() {
 addCohortNames <- function(data,
                            IdColumnName = "cohortDefinitionId",
                            nameColumnName = "cohortName") {
-  exposureRef <- read.csv(system.file("settings", "exposureRefFull.csv", package = "OutcomeMisclassificationEval"))
-  outcomeRef <- read.csv(system.file("settings", "outcomeRef.csv", package = "OutcomeMisclassificationEval"))
+  exposureRef <- read.csv(system.file("settings", "exposureRefFull.csv", package = "QbaEvaluation"))
+  outcomeRef <- read.csv(system.file("settings", "outcomeRef.csv", package = "QbaEvaluation"))
   idToName <- data.frame(cohortId = c(exposureRef$exposureCohortId, outcomeRef$cohortId),
                          cohortName = c(exposureRef$exposureCohortName, outcomeRef$cohortName))
   idToName <- idToName[order(idToName$cohortId), ]
@@ -107,7 +107,7 @@ addCohortNames <- function(data,
 addAnalysisDescription <- function(data,
                                    IdColumnName = "analysisId",
                                    nameColumnName = "analysisDescription") {
-  cmAnalysisListFile <- system.file("settings", "cmAnalysisList.json", package = "OutcomeMisclassificationEval")
+  cmAnalysisListFile <- system.file("settings", "cmAnalysisList.json", package = "QbaEvaluation")
   cmAnalysisList <- CohortMethod::loadCmAnalysisList(cmAnalysisListFile)
   idToName <- lapply(cmAnalysisList, function(x) data.frame(analysisId = x$analysisId, description = as.character(x$description)))
   idToName <- do.call("rbind", idToName)

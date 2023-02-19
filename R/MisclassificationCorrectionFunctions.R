@@ -11,9 +11,6 @@ outcomeMisclassificationQba <- function(a,
                                         spec1 = 1, # outcome spec in target
                                         spec0 = 1, # outcome spec in comparator
                                         alpha = 0.05) {
-
-  # add check that bias params between 0 and 1
-
   ac <- a + c
   bd <- b + d
   ab <- a + b
@@ -85,30 +82,3 @@ outcomeMisclassificationQba <- function(a,
                   estimates = estimates)
   return(results)
 }
-
-#' @export
-outcomeMisclassificationPie <- function(){
-  print("TODO")
-}
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

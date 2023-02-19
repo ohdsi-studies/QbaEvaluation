@@ -9,5 +9,5 @@ ROhdsiWebApi::insertCohortDefinitionSetInPackage(fileName = "inst/settings/outco
                                                  insertTableSql = FALSE,
                                                  insertCohortCreationR = FALSE,
                                                  generateStats = FALSE,
-                                                 packageName = "OutcomeMisclassificationEval")
+                                                 packageName = "QbaEvaluation")
 

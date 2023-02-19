@@ -26,7 +26,7 @@ execute <- function(connectionDetails,
     on.exit(DatabaseConnector::disconnect(connection))
 
     sql <- SqlRender::loadRenderTranslateSql(sqlFilename = "CreateCohortTable.sql",
-                                             packageName = "OutcomeMisclassificationEval",
+                                             packageName = "QbaEvaluation",
                                              dbms = attr(connection, "dbms"),
                                              cohort_database_schema = cohortDatabaseSchema,
                                              cohort_table = cohortTable)
