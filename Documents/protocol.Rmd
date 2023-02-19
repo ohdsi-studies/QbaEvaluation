@@ -1,0 +1,470 @@
+---
+title: "| RESEARCH PROTOCOL\n| \n| Empirical and simulated evaluation of quantitative bias analysis for outcome phenotype error correction in comparative effect estimation\n"
+fontsize: 10pt
+geometry: margin=1in
+output:
+  bookdown::word_document2:
+    toc: yes
+    reference_docx: ohdsi-protocol-style.docx
+  bookdown::html_document2:
+    df_print: paged
+    toc: yes
+    toc_depth: 2
+    toc_float: yes
+    number_sections: yes
+    number_tables: yes
+    css: "style.css"
+header-includes:
+- \usepackage[numbers,sort&compress]{natbib}
+- \usepackage{booktabs}
+- \usepackage{longtable}
+- \usepackage{array}
+- \usepackage{multirow}
+- \usepackage{wrapfig}
+- \usepackage{float}
+- \usepackage{colortbl}
+- \usepackage{pdflscape}
+- \usepackage{tabu}
+- \usepackage{threeparttable}
+- \usepackage{threeparttablex}
+- \usepackage[normalem]{ulem}
+- \usepackage{makecell}
+- \usepackage{caption}
+- \usepackage{rotating}
+- \usepackage{multirow}
+- \usepackage{mwe,tikz}
+- \usepackage[percent]{overpic}
+- \usepackage{enumitem}
+- \usepackage{hyperref}
+- \usepackage{magrittr}
+- \newcolumntype{P}[1]{>{\raggedright\arraybackslash}p{#1}}
+- \newcommand{\footerDate}{`r params$date`}
+- \input{header.tex}
+longtable: yes
+mainfont: Arial
+bibliography: Protocol.bib
+params:
+  date: 'Sys.Date()'
+  version: 1.0
+subtitle: 'Version: `r params$version`'
+link-citations: true
+csl: jamia.csl
+---
+
+```{r setup, include = FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+options(kableExtra.latex.load_packages = FALSE)
+library(kableExtra)
+library(dplyr)
+options(knitr.kable.NA = "")
+if (!knitr::is_latex_output() && !knitr::is_html_output()) {
+  options(knitr.table.format = "simple")
+}
+
+latex_table_font_size <- 8
+source("https://raw.githubusercontent.com/ohdsi-studies/LegendT2dm/master/R/PrettyOutput.R")
+```
+
+# Investigators
+
+```{r parties, echo = FALSE, results = "asis", warning = FALSE}
+parties <- readr::read_delim(col_names = TRUE,
+                             show_col_types = FALSE,
+                             delim = ";",
+                             trim_ws = TRUE,
+                             file = "
+Investigator; Contact
+James Weaver ^1,2,3^;james.weaver@ndorms.ox.ac.uk
+Patrick B. Ryan ^2,3,4^;ryan@ohdsi.org
+Victoria Strauss ^1,2^;victoria.strauss@csm.ox.ac.uk
+Marc A. Suchard ^3,5^;msuchard@ucla.edu
+Joel Swerdel ^2,3^;jswerdel@its.jnj.com
+Daniel Prieto-Alhambra ^1,3,6^;daniel.prietoalhambra@ndorms.ox.ac.uk
+")
+
+tab <- kable(parties, booktabs = TRUE, linesep = "") %>% # fix footnote order, number 1 first
+  column_spec(1, width = "20em") %>%
+footnote(general = "**^1^**Centre for Statistics in Medicine, Nuffield Department of Orthopedics, Rheumatology and Musculoskeletal Sciences, University of Oxford, Oxford, UK; **^2^**Observational Health Data Analytics, Janssen Research and Development, Titusville, NJ, USA; **^3^**Observational Health Data Sciences and Informatics, New York, NY, USA; **^4^**Department of Biomedical Informatics, Columbia University Medical Center, New York, NY, USA; **^5^**Department of Biostatistics, Fielding School of Public Health, and Department of Biomathematics, David Geffen School of Medicine, UCLA, Los Angeles, CA, USA; **^6^**Medical Informatics, Erasmus Medical Centre, Rotterdam, Netherlands", general_title = "")
+
+if (knitr::is_latex_output()) {
+  tab %>% kable_styling(latex_options = "striped", font_size = latex_table_font_size)
+} else {
+  tab %>% kable_styling(bootstrap_options = "striped")
+}
+```
+
+## Disclosures
+
+This study is undertaken within Observational Health Data Sciences and Informatics (OHDSI), an open science collaboration.
+**JW**, **PR**, and **JS** are employees of shareholders of Janssen R&D (a Johnson & Johnson company). **MAS** receives grant support from the US National Institutes of Health, US Food & Drug Administration and US Department of Veterans Affairs and contracts from Janssen R&D. **VS** has no conflicts of interest to declare. **DPA**’s research group has received grant support from Amgen, Chesi-Taylor, Novartis, and UCB Biopharma. His department has received advisory, consultancy fees from Amgen, Astellas, AstraZeneca, Johnson & Johnson, and UCB Biopharma and fees for speaker services from Amgen and UCB Biopharma. Janssen, on behalf of IMI-funded EHDEN and EMIF consortiums, and Synapse Management Partners have supported training programs organized by DPA's department and open for external participants organized by his department outside submitted work.
+
+# Rationale and background
+
+Phenotype error is acknowledged but rarely corrected for in causal effect estimation studies using observational data. Quantitative bias analysis (QBA) is a method for phenotype error correction, but the extent to which it minimizes bias in effect estimates is unclear.
+
+# Study objectives
+
+* Empirically evaluate QBA for outcome phenotype error correction in several pharmacoepidemiologic comparative effect estimation scenarios
+* Simulate an analytic space defined by outcome incidence proportions (IP), observed effect estimates, and phenotype measurement errors to determine which QBA input combinations produce valid results.
+
+# Research methods
+
+## Quantitative bias analysis
+
+QBA is a method for correcting outcome phenotype error that can bias comparative effect estimates[@Lash2009-ch; @Lash2014-jd]. Phenotype definition performance characteristics (sensitivity and specificity, positive and negative predictive value) are required inputs for applying QBA. We use QBA for outcome phenotype error correction per the equations in **Table 1a** and **Table 1b**.
+
+### Table 1a: Observed exposure by outcome contingency table
+```{r observed2x2, echo = FALSE, results = "asis", warning = FALSE}
+observed2x2 <- readr::read_delim(col_names = TRUE,
+                                 show_col_types = FALSE,
+                                 delim = ";",
+                                 trim_ws = TRUE,
+                                 file = "
+Outcome;T;C
+O[+];a;b
+O[-];c;d
+Total;a + c;a + d
+")
+tab <- kable(observed2x2, booktabs = TRUE, linesep = "") %>%
+  column_spec(1, width = "30em") %>%
+  footnote(general = "T: observed target exposures, C: observed comparator exposures, O: observed outcomes", general_title = "")
+if (knitr::is_latex_output()) {
+  tab %>% kable_styling(latex_options = "striped", font_size = latex_table_font_size)
+} else {
+  tab %>% kable_styling(bootstrap_options = "striped")
+}
+```
+
+### Table 1b Expected exposure by outcome contingency table corrected for outcome phenotype error
+```{r expected2x2, echo = FALSE, results = "asis", warning = FALSE}
+expected2x2 <- readr::read_delim(col_names = TRUE, # add check, x, and sigma symbols
+                                 show_col_types = FALSE,
+                                 delim = ";",
+                                 trim_ws = TRUE,
+                                 file = "
+Outcome;T;C
+O[+];A = a - (1 - SP1) * (a + c)) / (SN1 - (1 - SP1);B = b - (1 - SP0) * (b + d)) / (SN0 - (1 - SP0)
+O[-];C = (a + c) - A;D = (b + d) - B
+Total;A + C;B + D
+")
+tab <- kable(expected2x2, booktabs = TRUE, linesep = "") %>%
+  footnote(general = "T: expected target exposures, C: expected comparator exposures, O: expected outcomes, SN1: sensitivity in target, SN0: sensitivity in comparator, SP1: specificity in target, SP0 specificity in comparator", general_title = "")
+if (knitr::is_latex_output()) {
+  tab %>% kable_styling(latex_options = "striped", font_size = latex_table_font_size)
+} else {
+  tab %>% kable_styling(bootstrap_options = "striped")
+}
+```
+
+
+## Probabilistic reference standard validation
+
+PheValuator is a method to calculate the performance characteristics of phenotype algorithms, namely, sensitivity, specificity, and positive and negative predictive value[@Swerdel2019-fl; @Swerdel2022-pi]. It develops a diagnostic predictive model to determine a probabilistic reference standard of patients against which phenotype algorithm performance can be assessed. **Table 2** reports the PheValuator confusion matrix and error metric calculations. 
+
+### Table 2: PheValuator confusion matrix
+```{r phevalconfusionmatrix, echo = FALSE, results = "asis", warning = FALSE}
+phevalconfusionmatrix <- readr::read_delim(col_names = TRUE, # add check, x, and sigma symbols
+                                           show_col_types = FALSE,
+                                           delim = ";",
+                                           trim_ws = TRUE,
+                                           file = "
+Diagnostic model output;Phenotype algorithm case;Phenotype algorithm non-case
+Predicted probability from diagnostic predictive model, P(Y);TP = $\\Sigma$[P(Y | Case)];FP = $\\Sigma$[1 - P(Y | Case)]
+Predicted probability from diagnostic predictive model, P(Y);FN = $\\Sigma$[P(Y | Non-case)];TN = $\\Sigma$[1 - P(Y | Non-case)]
+")
+tab <- kable(phevalconfusionmatrix, booktabs = TRUE, linesep = "") %>%
+  #column_spec(1, width = "30em") %>%
+  footnote(general = "TP: true positive, FP: false positive, FN: false negative, TN: true negative, Sensitivity = TP / (TP + FN), Specificity = TN / (TN + FP), PPV = TP / (TP + FP), NPV = TN / (TN + FN)", general_title = "")
+if (knitr::is_latex_output()) {
+  tab %>% kable_styling(latex_options = "striped", font_size = latex_table_font_size)
+} else {
+  tab %>% kable_styling(bootstrap_options = "striped")
+}
+```
+
+The following cohorts are required input for a PheValuator validation study:
+
+- Ischemic stroke events during inpatient or emergency room visits
+  + https://epi.jnj.com/atlas/#/cohortdefinition/4008
+- Extremely specific cohort (xSpec)
+  + https://epi.jnj.com/atlas/#/cohortdefinition/4034
+- Extremely sensitive cohort (xSens)
+  + https://epi.jnj.com/atlas/#/cohortdefinition/4036
+- Prevalence cohort
+  + https://epi.jnj.com/atlas/#/cohortdefinition/4037
+- Database population evaluation cohort
+  + https://epi.jnj.com/atlas/#/cohortdefinition/4038
+- Exposure population evaluation cohorts
+  + https://epi.jnj.com/atlas/#/cohortdefinition/4521 (Note, this is a cohort shell with placeholders where drug exposure and condition occurrence concept sets. These replacements are made to construct the following exposure population evaluation cohorts: 
+    - ACE exposed without ischemic stroke OR ACE exposed with subsequent ischemic stroke
+    - ARB exposed without ischemic stroke OR ARB exposed with subsequent ischemic stroke
+    - THZ exposed without ischemic stroke OR THZ exposed with subsequent ischemic stroke
+    
+Detailed cohort definitions for probabilistic reference standard validation are available in
+[Appendix Section A][Probabilistic reference standard validation cohort definitions].
+
+## Empirical example
+
+### Design
+
+Active comparator, new user comparative cohort study to estimate the risk of ischemic stroke among patients with hypertension initiating:
+
+* Angiotensin-converting enzyme inhibitors (ACE) vs angiotensin receptor blockers (ARB)
+* Angiotensin-converting enzyme inhibitors (ACE) vs Thiazide/thiazide-like diuretics (THZ)
+
+### Exposure cohort definitions
+
+Detailed exposure cohort definitions for 3 class-level hypertension treatments are in [Appendix Section B][Exposure cohort definitions]. 
+
+#### ACEI new users with prior hypertension
+
+- First use of ACEI on or after January 1, 2010 with ≥365 days of prior continuous database observation
+  + ≥1 condition occurrence of hypertension between 365 and 0 days relative to first use
+  + exactly 1 exposure to hypertension medications between 0 and 7 days relative to first use 
+  + no prior exposure to hypertension medications
+
+#### ARB new users with prior hypertension
+
+- First use of ARB on or after January 1, 2010 with ≥365 days of prior continuous database observation
+  + ≥1 condition occurrence of hypertension between 365 and 0 days relative to first use
+  + exactly 1 exposure to hypertension medications between 0 and 7 days relative to first use 
+  + no prior exposure to hypertension medications
+
+#### THZ new users with prior hypertension
+
+- First use of THZ on or after January 1, 2010 with ≥365 days of prior continuous database observation
+  + ≥1 condition occurrence of hypertension between 365 and 0 days relative to first use
+  + exactly 1 exposure to hypertension medications between 0 and 7 days relative to first use 
+  + no prior exposure to hypertension medications
+
+### Outcome definition
+
+- Inpatient or emergency room visits on or after January 1, 2010
+  + ≥1 condition occurrence of ischemic stroke
+  + exactly 0 condition occurrences of ischemic stroke between -365 and -1 days relative to inpatient or emergency room visit with ischemic stroke
+
+The detailed outcome definition for inpatient ischemic stroke is in [Appendix Section C][Outcome cohort definition].
+
+### Data sources
+
+The study will be executed against 4 US adminstrative healthcare claims and 1 US electronic health record databases.
+
+- Optum® de-identified Clinformatics® Datamart - Date of Death (optum_extended_dod)
+- Optum® Electronic Health Record (optum_ehr)
+- IBM MarketScan® Commercial Database (truven_ccae)
+- IBM MarketScan® Multi-State Medicaid (truven_mdcd)
+- IBM MarketScan® Medicare Supplemental Beneficiaries (truven_mdcr)
+
+The database descriptions are in [Appendix Section D][Data sources].
+
+### Outcome definition
+
+See [Appendix Section B][Outcome definition] for detailed exposure definitions.
+
+### Time-at-risk
+
+- 1 day to 365 days relative to exposure start
+- 1 day to 730 days relative to exposure start
+
+### Analyses
+
+- Calculate database-level (i.e., non-differential) and exposure-level (i.e., differential) ischemic stroke phenotype definition sensitivity and specificity using probabilistic reference standard validation studies in each data source
+- Estimate comparative treatment effect using logistic regression (odds ratio [OR] with 95% confidence intervals [CI]) for ACE vs ARB and ACE vs THZ under the following analysis specifications:
+  + Unadjusted
+  + Non-differential QBA adjustment
+  + Differential QBA adjustment
+  + 1:1 propensity score (PS) matched
+  + 1:1 PS matched with non-differential QBA
+  + 1:1 PS matched with differential QBA
+- Execute 5 databases x 2 comparisons x 2 TARs x 6 analyses] = 120 analyses
+
+### Evaluation metrics
+
+QBA performance evaluated by bias difference, relative bias, squared error, and precision difference between analyses that did vs did not include QBA.
+
+- **Bias difference:** log(OR) - log(OR~QBA~)
+- **Relative bias:** (OR - OR~QBA~) / OR * 100
+- **Squared error:** (log(OR) - log(OR~QBA~)^2^
+- **Precision difference:** 1 / (SE(log(OR))^2^ – 1 / (SE(log(OR~QBA~))^2^
+
+## Grid space simulation
+
+### Inputs
+
+Create grid space of all combinations of 4 input parameters:
+
+- 5 outcome incidence proportions (IP) [10^1^ , 10^2^ , 10^3^ , 10^4^ , 10^5^]
+- 6 uncorrected odds ratios (OR) [1, 1.25, 1.50, 2, 4, 10]
+- 20 non-differential sensitivity values [0.05 to 1.00 by 0.05]
+- 20 non-differential specificity values [1 - prevalence to 1.00 by 5%^ile^]
+
+The complete grid space consists of 12,000 2x2 contingency tables, each with 1,000,000 target and 1,000,000 comparator exposures and associated inputs.
+
+### Analysis
+
+For each IP-OR combination, compute a distribution of QBA-corrected ORs with 95% CIs across combinations of sensitivity and specificity values and plot contours across the complete IP by OR grid space.
+
+### Evaluation metrics
+
+The grid space simulation analysis will be evaluated by bias difference and relative bias between the unadjusted OR and the 25%^ile^, 50%^ile^, 75%^ile^, and maximum of the QBA-corrected distribution of estimates. Report the overall, IP-stratified, OR-stratified, and IP-OR-stratified proportion of the total grid space that produces valid (i.e., non-zero) QBA-corrected counts.
+
+- **Bias difference:** log(OR) - log(OR~QBA~)
+- **Relative bias:** (OR - OR~QBA~) / OR * 100
+
+# Strengths and limitations
+
+## Strengths
+
+- 1
+- 2
+- 3
+
+## Limitations
+
+- Empirical example uses simple and multidimensional QBA only, no probabilistic QBA or multiple bias modeling
+- Only uses sensitivity and specificity approach, no use of PPV and NPV
+- Logistic regression outcome model assumes constant risk, discards survival information
+- Assumes probabilistic reference validation metrics are accurate
+- Validation study within exposure-indication populations will have incomplete overlap with restricted study populations
+
+# Protection of human subjects
+This work does not involve human patient research. It uses de-identified patient-level data collected during routine healthcare provision. Confidentiality of patient records will be maintained. Study reports will contain aggregate data only and will not identify individual patients of care providers.
+
+# References {-}
+
+<div id="refs"></div>
+
+# (APPENDIX) Appendix {-}
+
+# Probabilistic reference standard validation cohort definitions
+
+```{r xSpec, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "xSpec - Ischemic stroke.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "xSpec validation cohort",
+                                     json = cohortJson,
+                                     withConcepts = FALSE)
+```
+
+```{r xSens, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "xSens - Ischemic stroke.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "xSens validation cohort",
+                                     json = cohortJson,
+                                     withConcepts = FALSE)
+```
+
+```{r prev, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "Prev - Ischemic stroke.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "Prevalence validation cohort",
+                                     json = cohortJson,
+                                     withConcepts = FALSE)
+```
+
+```{r dbeval, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "Eval - Ischemic stroke.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "Database population evaluation cohort",
+                                     json = cohortJson,
+                                     withConcepts = FALSE)
+```
+
+```{r aceeval, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "Eval - Ischemic stroke - ACEI w hypertension.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "ACEI new users evaluation cohort",
+                                     json = cohortJson,
+                                     withConcepts = FALSE)
+
+```
+
+```{r arbeval, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "Eval - Ischemic stroke - ARB w hypertension.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "ARB new users evaluation cohort",
+                                     json = cohortJson,
+                                     withConcepts = FALSE)
+
+```
+
+```{r thzeval, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "Eval - Ischemic stroke - THZ w hypertension.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "THS new users evaluation cohort",
+                                     json = cohortJson,
+                                     withConcepts = FALSE)
+
+```
+
+# Exposure cohort definitions
+
+```{r ace-cohort, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "ACEI w hypertension.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "ACEI new users with prior hypertension",
+                                     json = cohortJson,
+                                     withConcepts = TRUE)
+```
+
+```{r arb-cohort, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "ARB w hypertension.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "ARB new users with prior hypertension",
+                                     json = cohortJson,
+                                     withConcepts = TRUE)
+```
+
+```{r thz-cohort, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "THZ w hypertension.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "THZ new users with prior hypertension",
+                                     json = cohortJson,
+                                     withConcepts = TRUE)
+```
+
+# Outcome cohort definition
+
+```{r ischemicstroke-cohort, echo = FALSE, results = "asis", warning = FALSE, message = FALSE}
+cohortJson <- SqlRender::readSql(system.file("cohorts", "Ischemic stroke PL.json", package = "QbaEvaluation"))
+baseCohort <- RJSONIO::fromJSON(cohortJson)
+cohortJson <- RJSONIO::toJSON(baseCohort, digits = 50)
+printCohortDefinitionFromNameAndJson(name = "Ischemic stroke events during inpatient or emergency room visits",
+                                     json = cohortJson,
+                                     withConcepts = TRUE)
+```
+
+
+
+# Data sources
+
+```{r datasources, echo = FALSE, results = "asis", warning = FALSE}
+datasources <- readr::read_delim(col_names = TRUE,
+                                 show_col_types = FALSE,
+                                 delim = ";",
+                                 trim_ws = TRUE,
+                                 file = "
+Data source;Short name;Description
+Optum(c) de-identified Electronic Health Record Dataset;optum_ehr;Optum(c) de-identified Electronic Health Record Dataset is derived from dozens of healthcare provider organizations in the United States (that include more than 700 hospitals and 7,000 Clinics treating more than 103 million patients) receiving care in the United States. The medical record data includes clinical information, inclusive of prescriptions as prescribed and administered, lab results, vital signs, body measurements, diagnoses, procedures, and information derived from clinical Notes using Natural Language Processing (NLP).
+Optum(c) de-Identified Clinformatics® Data Mart Database – Date of Death;optum_dod;Optum(c) De-Identified Clinformatics(c) Data Mart Database is an adjudicated administrative health claims database for members with private health insurance, who are fully insured in commercial plans or Medicare Advantage. The population is primarily representative of US commercial claims patients (0-65 years old) with some Medicare (65+ years old) however ages are capped at 90 years. It includes data captured from administrative claims processed from inpatient and outpatient medical services and prescriptions as dispensed, as well as results for outpatient lab tests processed by large national lab vendors who participate in data exchange with Optum. Optum DOD also provides date of death (month and year only) for members with both medical and pharmacy coverage from the Social Security Death Master File (however after 2011 reporting frequency changed due to changes in reporting requirements) and location information for patients is at the US state level.
+IBM MarketScan Commercial Claims and Encounters Database;truven_ccae;IBM MarketScan Commercial Claims and Encounters Database (CCAE) is a US employer-based private-payer administrative claims database. The data include adjudicated health insurance claims (e.g., inpatient, outpatient, and outpatient pharmacy) as well as enrollment data from large employers and health plans who provide private healthcare coverage to employees, their spouses, and dependents. Additionally, it captures laboratory tests for a subset of the covered lives. This administrative claims database includes a variety of fee-for-service, preferred provider organizations, and capitated health plans.
+IBM MarketScan MultiState Medicaid Database;truven_mdcd;IBM MarketScan Multi-State Medicaid Database (MDCD) contains adjudicated US health insurance claims for Medicaid enrollees from multiple states and includes hospital discharge diagnoses, outpatient diagnoses and procedures, and outpatient pharmacy claims as well as ethnicity and Medicare eligibility. Members maintain their same identifier even if they leave the system for a brief period; however, the dataset lacks lab data.
+IBM MarketScan Medicare Supplemental and Coordination of Benefits Database;truven_mdcr;IBM MarketScan Medicare Supplemental and Coordination of Benefits Database (MDCR) represents health services of retirees in the United States with primary or Medicare supplemental coverage through privately insured fee-for-service, point-of-service, or capitated health plans. These data include adjudicated health insurance claims (e.g., inpatient, outpatient, and outpatient pharmacy). Additionally, it captures laboratory tests for a subset of the covered lives.
+")
+tab <- kable(datasources, booktabs = TRUE, linesep = "")
+if (knitr::is_latex_output()) {
+  tab %>% kable_styling(latex_options = "striped", font_size = latex_table_font_size)
+} else {
+  tab %>% kable_styling(bootstrap_options = "striped")
+}
+```
