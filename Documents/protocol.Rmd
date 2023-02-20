@@ -3,9 +3,6 @@ title: "| RESEARCH PROTOCOL\n| \n| Empirical and simulated evaluation of quantit
 fontsize: 10pt
 geometry: margin=1in
 output:
-  bookdown::word_document2:
-    toc: yes
-    reference_docx: ohdsi-protocol-style.docx
   bookdown::html_document2:
     df_print: paged
     toc: yes
@@ -14,6 +11,9 @@ output:
     number_sections: yes
     number_tables: yes
     css: "style.css"
+  bookdown::word_document2:
+    toc: yes
+    reference_docx: ohdsi-protocol-style.docx
 header-includes:
 - \usepackage[numbers,sort&compress]{natbib}
 - \usepackage{booktabs}
@@ -293,7 +293,7 @@ QBA performance evaluated by bias difference, relative bias, squared error, and 
 
 Create grid space of all combinations of 4 input parameters:
 
-- 5 outcome incidence proportions (IP) [10^1^ , 10^2^ , 10^3^ , 10^4^ , 10^5^]
+- 5 outcome incidence proportions (IP) [10^-1^ , 10^-2^ , 10^-3^ , 10^-4^ , 10^-5^]
 - 6 uncorrected odds ratios (OR) [1, 1.25, 1.50, 2, 4, 10]
 - 20 non-differential sensitivity values [0.05 to 1.00 by 0.05]
 - 20 non-differential specificity values [1 - prevalence to 1.00 by 5%^ile^]
