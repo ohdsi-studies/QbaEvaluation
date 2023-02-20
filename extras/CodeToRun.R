@@ -167,7 +167,7 @@ QbaEvaluation::execute(connectionDetails = connectionDetails,
                        runOutcomeValidation = FALSE,
                        runCohortMethod = FALSE,
                        runMisclassificationCorrection = FALSE,
-                       exportResults = TRUE)
+                        exportResults = TRUE)
 
 
 # Prepare estimation for results viewer ========================================
@@ -184,8 +184,8 @@ file.copy(from = c(list.files(file.path(studyFolder, "optum_ehr", "export"), ful
           to = shinyDataFolder,
           overwrite = TRUE)
 
-QbaEvaluation::mergeShinyData(shinyDataFolder = shinyDataFolder,
-                              mergedShinyDataFolder = file.path(studyFolder, "mergedShinyDataFolder"))
+mergeShinyData(shinyDataFolder = shinyDataFolder,
+               mergedShinyDataFolder = file.path(studyFolder, "mergedShinyDataFolder"))
 
 
 # Grid-space simulation analysis ===============================================

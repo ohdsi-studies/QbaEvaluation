@@ -4,34 +4,42 @@ runGridSpaceAnalysis <- function(createGridSpace = FALSE,
                                  sens = seq(0.05, 1, 0.05),
                                  incidences = 10^(-1:-5),
                                  runQba = FALSE,
-                                 outputFolder) {
+                                 outputFolder) { # outputFolder <- gridSpaceFolder
 
+
+  gridSpaceFile <- file.path(outputFolder, "grid_space.csv")
+  gridSpaceResultsFile <- file.path(outputFolder, "grid_space_results.csv")
 
   # create grid space ==========================================================
 
   if (createGridSpace) {
 
-    start <- Sys.time()
+    if (!file.exists(gridSpaceFile)) {
 
-    fullSpace <- tibble::tibble()
+      start <- Sys.time()
 
-    for (incidence in incidences) {
-      min <- 1 - incidence
-      spec <- seq(min, 1, length = 20)
-      sensSpec <- tibble::as_tibble(expand.grid(sens = sens, spec = spec))
-      space <- merge(oddsRatios, sensSpec) %>%
-        dplyr::rename(or = x) %>%
-        dplyr::mutate(incidence = incidence) %>%
-        dplyr::arrange(or, sens, spec)
-      fullSpace <- dplyr::bind_rows(fullSpace, space) %>%
-        dplyr::relocate(incidence, or, sens, spec)
+      fullSpace <- tibble::tibble()
+      for (incidence in incidences) {
+        min <- 1 - incidence
+        spec <- seq(min, 1, length = 20)
+        sensSpec <- tibble::as_tibble(expand.grid(sens = sens, spec = spec))
+        space <- merge(oddsRatios, sensSpec) %>%
+          dplyr::rename(or = x) %>%
+          dplyr::mutate(incidence = incidence) %>%
+          dplyr::arrange(or, sens, spec)
+        fullSpace <- dplyr::bind_rows(fullSpace, space) %>%
+          dplyr::relocate(incidence, or, sens, spec)
+      }
+
+      gridSpace <- plyr::adply(fullSpace, 1, getCellCounts)
+      readr::write_csv(gridSpace, file.path(outputFolder, "grid_space.csv"))
+
+      delta <- Sys.time() - start
+      message("Creating grid space took ", signif(delta, 3), attr(delta, "units"))
+
+    } else {
+      message(gridSpaceFile, "is already created.")
     }
-
-    gridSpace <- plyr::adply(fullSpace, 1, getCellCounts)
-    readr::write_csv(gridSpace, file.path(outputFolder, "grid_space.csv"))
-
-    delta <- Sys.time() - start
-    paste("Creating grid space took ", signif(delta, 3), attr(delta, "units"))
   }
 
 
@@ -39,15 +47,21 @@ runGridSpaceAnalysis <- function(createGridSpace = FALSE,
 
   if (runQba) {
 
-    start <- Sys.time()
+    if (!file.exists(gridSpaceResultsFile)) {
 
-    gridSpaceResults <- plyr::adply(gridSpace, 1, QbaEvaluation::getQbaResults)
-    # gridSpaceResults <- gridSpaceResults %>% dplyr::filter(!is.na(correctedOr))
-    delta <- Sys.time() - start
-    readr::write_csv(gridSpaceResults, file.path(outputFolder, "grid_space_results.csv"))
+      start <- Sys.time()
 
-    delta <- Sys.time() - start
-    paste("Applying QBA took ", signif(delta, 3), attr(delta, "units"))
+      gridSpaceResults <- plyr::adply(gridSpace, 1, QbaEvaluation::getQbaResults)
+      # gridSpaceResults <- gridSpaceResults %>% dplyr::filter(!is.na(correctedOr))
+      delta <- Sys.time() - start
+      readr::write_csv(gridSpaceResults, file.path(outputFolder, "grid_space_results.csv"))
+
+      delta <- Sys.time() - start
+      message("Applying QBA took ", signif(delta, 3), attr(delta, "units"))
+
+    } else {
+      message(gridSpaceResultsFile, "is already created.")
+    }
   }
 }
 

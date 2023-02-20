@@ -3,6 +3,9 @@ title: "| RESEARCH PROTOCOL\n| \n| Empirical and simulated evaluation of quantit
 fontsize: 10pt
 geometry: margin=1in
 output:
+  bookdown::word_document2:
+    toc: yes
+    reference_docx: ohdsi-protocol-style.docx
   bookdown::html_document2:
     df_print: paged
     toc: yes
@@ -11,9 +14,6 @@ output:
     number_sections: yes
     number_tables: yes
     css: "style.css"
-  bookdown::word_document2:
-    toc: yes
-    reference_docx: ohdsi-protocol-style.docx
 header-includes:
 - \usepackage[numbers,sort&compress]{natbib}
 - \usepackage{booktabs}
