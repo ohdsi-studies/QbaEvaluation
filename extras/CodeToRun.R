@@ -188,19 +188,25 @@ mergeShinyData(shinyDataFolder = shinyDataFolder,
                mergedShinyDataFolder = file.path(studyFolder, "mergedShinyDataFolder"))
 
 
-# Grid-space simulation analysis ===============================================
+# Grid space simulation analysis ===============================================
 
 gridSpaceFolder <- file.path(studyFolder, "gridSpace")
 if (!file.exists(gridSpaceFolder)) {
   dir.create(gridSpaceFolder)
 }
 
+
 QbaEvaluation::runGridSpaceAnalysis(createGridSpace = TRUE,
-                                    oddsRatios = c(1.01, 1.25, 1.50, 2, 4, 10), # 1.0001
+                                    oddsRatios = c(1.001, 1.25, 1.50, 2, 4, 10),
                                     sens = seq(0.05, 1, 0.05),
                                     incidences = 10^(-1:-5),
                                     runQba = TRUE,
                                     outputFolder = gridSpaceFolder)
+
+mergedShinyDataFolder = file.path(studyFolder, "mergedShinyDataFolder")
+file.copy(from = file.path(gridSpaceFolder, "grid_space_results.rds"),
+          to = mergedShinyDataFolder,
+          overwrite = TRUE)
 
 
 

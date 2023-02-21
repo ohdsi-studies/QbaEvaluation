@@ -7,8 +7,8 @@ runGridSpaceAnalysis <- function(createGridSpace = FALSE,
                                  outputFolder) { # outputFolder <- gridSpaceFolder
 
 
-  gridSpaceFile <- file.path(outputFolder, "grid_space.csv")
-  gridSpaceResultsFile <- file.path(outputFolder, "grid_space_results.csv")
+  gridSpaceFile <- file.path(outputFolder, "grid_space.rds")
+  gridSpaceResultsFile <- file.path(outputFolder, "grid_space_results.rds")
 
   # create grid space ==========================================================
 
@@ -30,9 +30,8 @@ runGridSpaceAnalysis <- function(createGridSpace = FALSE,
         fullSpace <- dplyr::bind_rows(fullSpace, space) %>%
           dplyr::relocate(incidence, or, sens, spec)
       }
-
       gridSpace <- plyr::adply(fullSpace, 1, getCellCounts)
-      readr::write_csv(gridSpace, file.path(outputFolder, "grid_space.csv"))
+      saveRDS(gridSpace, gridSpaceFile)
 
       delta <- Sys.time() - start
       message("Creating grid space took ", signif(delta, 3), attr(delta, "units"))
@@ -52,9 +51,9 @@ runGridSpaceAnalysis <- function(createGridSpace = FALSE,
       start <- Sys.time()
 
       gridSpaceResults <- plyr::adply(gridSpace, 1, QbaEvaluation::getQbaResults)
-      # gridSpaceResults <- gridSpaceResults %>% dplyr::filter(!is.na(correctedOr))
-      delta <- Sys.time() - start
-      readr::write_csv(gridSpaceResults, file.path(outputFolder, "grid_space_results.csv"))
+      gridSpaceResults$biasDifference <- log(gridSpaceResults$or) - log(gridSpaceResults$correctedOr)
+      gridSpaceResults$relativeBias <- (gridSpaceResults$or - gridSpaceResults$correctedOr) / gridSpaceResults$or
+      saveRDS(gridSpaceResults, gridSpaceResultsFile)
 
       delta <- Sys.time() - start
       message("Applying QBA took ", signif(delta, 3), attr(delta, "units"))
