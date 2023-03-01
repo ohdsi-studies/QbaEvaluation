@@ -209,5 +209,19 @@ file.copy(from = file.path(gridSpaceFolder, "grid_space_results.rds"),
           overwrite = TRUE)
 
 
+# Manuscript tables and figures ================================================
+
+
+manuscriptFolder <- file.path(studyFolder, "manuscript")
+if (!file.exists(manuscriptFolder)) {
+  dir.create(manuscriptFolder)
+}
+
+QbaEvaluation::createTablesAndFigures(createTable2 = FALSE,
+                                      createTable3 = FALSE,
+                                      createFigure1 = FALSE,
+                                      createFigure2 = FALSE,
+                                      createFigure3 = TRUE,
+                                      outputFolder = manuscriptFolder)
 
 

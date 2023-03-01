@@ -3,6 +3,7 @@
 export(createExposureCohorts)
 export(createOutcomeCohorts)
 export(createTable)
+export(createTablesAndFigures)
 export(createValidationCohorts)
 export(drawContourPlot)
 export(execute)
