@@ -2,6 +2,7 @@
 #' @export
 createTablesAndFigures <- function(createTable2 = FALSE,
                                    createTable3 = FALSE,
+                                   createTable4 = FALSE,
                                    createFigure1 = FALSE,
                                    createFigure2 = FALSE,
                                    createFigure3 = FALSE,
@@ -200,16 +201,123 @@ createTablesAndFigures <- function(createTable2 = FALSE,
                        "Precision difference",
                        "Squared error")
     table3Manuscript <- table3[grepl("730d", table3$`Analysis comparison`), ]
-    table3Appendix <- table3[!grepl("730d", table3$`Analysis comparison`), ]
+    table3Appendix <- table3[!grepl("730d", table3$`Analysis comparison`), ] ## DROP 183d results
 
     readr::write_csv(table3Manuscript, file.path(outputFolder, "table3.csv"), na = "")
     readr::write_csv(table3Appendix, file.path(outputFolder, "sTable3.csv"), na = "")
   }
 
 
+  # Table 4: Grid space simulation QBA performance metrics =====================
+  if (createTable4) {
+
+    prepareContourData <- function(gridSpaceResults,
+                                   incidence,
+                                   or) {
+      dat <- gridSpaceResults[gridSpaceResults$incidence %in% incidence & gridSpaceResults$or %in% or, ]
+      return(dat)
+    }
+
+    incidences <- unique(gridSpaceResults$incidence)
+    ors <- unique(gridSpaceResults$or)
+
+    gridSpaceEvalMetrics <- tibble::tibble()
+    for (incidence in incidences) { # incidence <- incidences[1]
+      for (or in ors) {             # or <- ors[1]
+        dat <- prepareContourData(gridSpaceResults,
+                                  incidence = incidence,
+                                  or = or)
+        breaks <- as.numeric(quantile(dat$correctedOr,
+                                      na.rm = TRUE,
+                                      type = 3))
+        pointData <- dat[dat$correctedOr %in% breaks, c("or", "correctedOr", "sens", "spec")] %>%
+          dplyr::group_by(or, correctedOr) %>%
+          dplyr::summarize(n = nrow(dat),
+                           valid = sum(!is.na(dat$correctedOr)),
+                           estimable = valid / n,
+                           nonEstimable = 1 - estimable,
+                           sens = mean(sens),
+                           spec = mean(spec),
+                           .groups = "drop") %>% # avg sens and spec by corrected OR if >1 row per corrected OR (doesnt happen)
+          dplyr::mutate(incidence = incidence,
+                        biasDifference = log(or) - log(correctedOr),
+                        relativeBias = (or - correctedOr) / or) %>%
+          dplyr::bind_cols(dist = c("min", "25%ile", "50%ile", "75%ile", "max")) %>%
+          dplyr::select(incidence,
+                        or,
+                        dist,
+                        correctedOr,
+                        estimable,
+                        sens,
+                        spec,
+                        biasDifference,
+                        relativeBias)
+        gridSpaceEvalMetrics <- dplyr::bind_rows(gridSpaceEvalMetrics, pointData)
+      }
+    }
+    table4 <- gridSpaceEvalMetrics %>%
+      dplyr::filter(dist == "50%ile") %>%
+      dplyr::select(-dist)
+    readr::write_csv(table4, file.path(outputFolder, "table4.csv"), na = "")
+
+    sTable4 <- gridSpaceEvalMetrics
+    readr::write_csv(sTable4, file.path(outputFolder, "sTable4.csv"), na = "")
+  }
+
+
   # Figure 1: Empirical example forest plots ===================================
   if (createFigure1) {
-    print("TODO")
+
+    figure1AnalysisIds <- c(9, 10, 17, 11, 12, 18)
+    sfigure1AnalysisIds <- c(5, 6, 15, 7, 8, 16)
+    figureAnalysisIds <- list(figure1AnalysisIds, sfigure1AnalysisIds)
+    comparatorIds <- c(2, 3)
+
+    forestPlots <- list()
+    for (analysisIds in figureAnalysisIds) {
+      for (comparatorId in comparatorIds) {
+        forestPlotData <- getForestPlotData(connection = NULL, # filter exposureOfInterest and outcomeOfInterest in DataClean.R
+                                            targetIds = 1,
+                                            comparatorIds = comparatorId,
+                                            outcomeIds = 4008,
+                                            databaseIds = database$databaseId,
+                                            analysisIds = analysisIds)
+        forestPlot <- plotForest(forestPlotData)
+        forestPlots[[length(forestPlots) + 1]] <- forestPlot
+      }
+    }
+
+    row1 <- grid::textGrob("ACEI vs ARB", rot = 90, gp = grid::gpar(fontsize = 12))
+    row2 <- grid::textGrob("ACEI vs THZ", rot = 90, gp = grid::gpar(fontsize = 12))
+    col0 <- grid::textGrob("")
+
+    # 730d TAR
+    plotGrob <- gridExtra::arrangeGrob(row1, forestPlots[[1]],
+                                       row2, forestPlots[[2]],
+                                       heights = c(3, 3),
+                                       widths = c(0.5, 7),
+                                       nrow = 2)
+    figure1 <- gridExtra::grid.arrange(plotGrob,
+                                       nrow = 1,
+                                       heights = 6)
+    ggplot2::ggsave(file.path(outputFolder, "figure1.png"),
+                    figure1,
+                    height = 7,
+                    width = 22)
+
+    # 365d TAR
+    sPlotGrob <- gridExtra::arrangeGrob(row1, forestPlots[[3]],
+                                        row2, forestPlots[[4]],
+                                        heights = c(3, 3),
+                                        widths = c(0.5, 7),
+                                        nrow = 2)
+    sFigure1 <- gridExtra::grid.arrange(sPlotGrob,
+                                        nrow = 1,
+                                        heights = 6)
+    ggplot2::ggsave(file.path(outputFolder, "sFigure1.png"),
+                    sFigure1,
+                    height = 7,
+                    width = 22)
   }
 
 
@@ -326,8 +434,8 @@ createTablesAndFigures <- function(createTable2 = FALSE,
     ors <- unique(gridSpaceResults$or)
 
     validQbaEstimates <- tibble::tibble()
-    for (incidence in incidences) { # incidence <- incidences[1]
-      for (or in ors) {             # or <- ors[1]
+    for (incidence in incidences) {
+      for (or in ors) {
         dat <- prepareContourData(gridSpaceResults,
                                   incidence = incidence,
                                   or = or)

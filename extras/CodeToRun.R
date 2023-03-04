@@ -167,7 +167,7 @@ QbaEvaluation::execute(connectionDetails = connectionDetails,
                        runOutcomeValidation = FALSE,
                        runCohortMethod = FALSE,
                        runMisclassificationCorrection = FALSE,
-                        exportResults = TRUE)
+                       exportResults = TRUE)
 
 
 # Prepare estimation for results viewer ========================================
@@ -217,10 +217,10 @@ if (!file.exists(manuscriptFolder)) {
   dir.create(manuscriptFolder)
 }
 
-QbaEvaluation::createTablesAndFigures(createTable2 = FALSE,
-                                      createTable3 = FALSE,
-                                      createFigure1 = FALSE,
-                                      createFigure2 = FALSE,
+QbaEvaluation::createTablesAndFigures(createTable2 = TRUE,
+                                      createTable3 = TRUE,
+                                      createFigure1 = TRUE,
+                                      createFigure2 = TRUE,
                                       createFigure3 = TRUE,
                                       outputFolder = manuscriptFolder)
 
