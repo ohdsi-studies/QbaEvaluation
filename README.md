@@ -1,5 +1,5 @@
-Empirical and simulated evaluation of quantitative bias analysis for outcome phenotype error correction in comparative effect estimation
-========================================================================================================================================
+Quantitative bias analysis for outcome phenotype error correction in comparative effect estimation: an empirical and synthetic evaluation
+=========================================================================================================================================
 
 <img src="https://img.shields.io/badge/Study%20Status-Results%20Available-yellow.svg" alt="Study Status: Results Available">
 
