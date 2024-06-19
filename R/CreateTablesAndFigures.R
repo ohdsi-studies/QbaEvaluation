@@ -1,4 +1,4 @@
-
+table4
 #' @export
 createTablesAndFigures <- function(createTable2 = FALSE,
                                    createTable3 = FALSE,
@@ -241,7 +241,7 @@ createTablesAndFigures <- function(createTable2 = FALSE,
                            .groups = "drop") %>% # avg sens and spec by corrected OR if >1 row per corrected OR (doesnt happen)
           dplyr::mutate(incidence = incidence,
                         biasDifference = log(or) - log(correctedOr),
-                        relativeBias = (or - correctedOr) / or) %>%
+                        relativeBias = (or - correctedOr) / or) * 100 %>%
           dplyr::bind_cols(dist = c("min", "25%ile", "50%ile", "75%ile", "max")) %>%
           dplyr::select(incidence,
                         or,
